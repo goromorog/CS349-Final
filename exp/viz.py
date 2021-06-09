@@ -28,7 +28,7 @@ MIN_CASES = 1000
 confirmed = os.path.join(
     BASE_PATH, 
     'csse_covid_19_time_series',
-    'time_series_19-covid-Confirmed.csv')
+    'time_series_covid19_confirmed_global.csv')
 confirmed = data.load_csv_data(confirmed)
 features = []
 targets = []
@@ -58,13 +58,21 @@ for val in np.unique(confirmed["Country/Region"]):
         confirmed, "Country/Region", val)
     cases, labels = data.get_cases_chronologically(df)
     cases = cases.sum(axis=0)
+    # print("cases")
+    # print(cases)
+    # print("labels")
+    # print(labels)
+    # print("val")
+    # print(val)
 
-    if cases.sum() > MIN_CASES:
+    if cases.sum() > MIN_CASES and (val == "US" or val == "Ethiopia" or val == "Angola"
+           or val == "Argentina" or val == "Canada" or val == "Albania"):
+    #if cases.sum() > MIN_CASES and (val == "US" or val == "United Kingdom" or val == "Canada" or val == "Burundi"):
         i = len(legend)
         lines = ax.plot(cases, label=labels[0,1])
         handles.append(lines[0])
         lines[0].set_linestyle(LINE_STYLES[i%NUM_STYLES])
-        lines[0].set_color(colors[i])
+        lines[0].set_color(colors[i*10])
         legend.append(labels[0, 1])
 
 ax.set_ylabel('# of confirmed cases')
@@ -72,5 +80,6 @@ ax.set_xlabel("Time (days since Jan 22, 2020)")
 
 ax.set_yscale('log')
 ax.legend(handles, legend, bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=4)
-plt.tight_layout()
+#plt.tight_layout()
+#plt.show()
 plt.savefig('results/cases_by_country.png')
